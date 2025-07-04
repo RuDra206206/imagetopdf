@@ -878,36 +878,54 @@
                 convertBtn.disabled = true;
                 
                 try {
-                    // Create new PDF
-                    const pdf = new jsPDF();
+                    // Process first image to determine orientation
+                    const firstFile = uploadedFiles[0];
+                    const firstImg = await loadImage(firstFile);
+                    
+                    // Determine page orientation based on settings and image
+                    const orientation = getOrientation(firstImg);
+                    const pageSizeValue = pageSize.value;
                     const margin = parseInt(marginSize.value) || 10;
                     
-                    // Process each image
-                    for (let i = 0; i < uploadedFiles.length; i++) {
+                    // Create new PDF with correct orientation
+                    let pdf;
+                    if (pageSizeValue === 'auto') {
+                        // Auto size - use image dimensions
+                        const dimensions = getAutoPageDimensions(firstImg);
+                        pdf = new jsPDF({
+                            orientation: orientation,
+                            unit: 'mm',
+                            format: [dimensions.width, dimensions.height]
+                        });
+                    } else {
+                        // Standard page size
+                        pdf = new jsPDF({
+                            orientation: orientation,
+                            unit: 'mm',
+                            format: pageSizeValue
+                        });
+                    }
+                    
+                    // Add first image
+                    addImageToPDF(pdf, firstImg, margin, pageSizeValue);
+                    
+                    // Process remaining images
+                    for (let i = 1; i < uploadedFiles.length; i++) {
                         const file = uploadedFiles[i];
                         const img = await loadImage(file);
                         
-                        // Add new page for each image after the first one
-                        if (i > 0) {
-                            pdf.addPage();
+                        // Add new page for each additional image
+                        if (pageSizeValue === 'auto') {
+                            const dimensions = getAutoPageDimensions(img);
+                            pdf.addPage([dimensions.width, dimensions.height], 
+                                      img.width > img.height ? 'landscape' : 'portrait');
+                        } else {
+                            pdf.addPage(pageSizeValue, 
+                                      getOrientation(img) === 'landscape' ? 'landscape' : 'portrait');
                         }
                         
-                        // Get page dimensions based on selected options
-                        const pageDimensions = getPageDimensions(pdf, img);
-                        
-                        // Calculate image dimensions to fit the page with margins
-                        const imgWidth = pageDimensions.width - (margin * 2);
-                        const imgHeight = (img.height / img.width) * imgWidth;
-                        
-                        // Add image to PDF
-                        pdf.addImage(
-                            img, 
-                            'JPEG', 
-                            margin, 
-                            margin, 
-                            imgWidth, 
-                            imgHeight
-                        );
+                        // Add image to the new page
+                        addImageToPDF(pdf, img, margin, pageSizeValue);
                     }
                     
                     // Save PDF
@@ -941,51 +959,53 @@
                 });
             }
             
-            function getPageDimensions(pdf, img) {
-                const selectedSize = pageSize.value;
-                const orientation = pageOrientation.value;
+            function getOrientation(img) {
+                const selectedOrientation = pageOrientation.value;
                 
-                // If auto size is selected, use image dimensions
-                if (selectedSize === 'auto') {
-                    // Convert pixels to mm (1px ≈ 0.264583mm)
-                    const width = img.width * 0.264583;
-                    const height = img.height * 0.264583;
-                    
-                    // Set PDF page size to image dimensions
-                    if (orientation === 'landscape' && width < height) {
-                        return { width: height, height: width };
-                    } else if (orientation === 'portrait' && width > height) {
-                        return { width: height, height: width };
-                    }
-                    return { width, height };
+                if (selectedOrientation === 'auto') {
+                    return img.width > img.height ? 'landscape' : 'portrait';
                 }
-                
-                // Use standard page sizes
-                let width, height;
-                
-                switch (selectedSize) {
-                    case 'letter':
-                        width = 215.9;
-                        height = 279.4;
-                        break;
-                    case 'legal':
-                        width = 215.9;
-                        height = 355.6;
-                        break;
-                    case 'a4':
-                    default:
-                        width = 210;
-                        height = 297;
-                        break;
-                }
-                
-                // Adjust for orientation
-                if (orientation === 'landscape' || 
-                    (orientation === 'auto' && img.width > img.height)) {
-                    return { width: height, height: width };
-                }
+                return selectedOrientation;
+            }
+            
+            function getAutoPageDimensions(img) {
+                // Convert pixels to mm (1px ≈ 0.264583mm)
+                const width = img.width * 0.264583;
+                const height = img.height * 0.264583;
                 
                 return { width, height };
+            }
+            
+            function addImageToPDF(pdf, img, margin, pageSizeValue) {
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                
+                // Calculate available space after margins
+                const availableWidth = pageWidth - (margin * 2);
+                const availableHeight = pageHeight - (margin * 2);
+                
+                // Calculate image dimensions to fit the available space while maintaining aspect ratio
+                let imgWidth = availableWidth;
+                let imgHeight = (img.height / img.width) * imgWidth;
+                
+                if (imgHeight > availableHeight) {
+                    imgHeight = availableHeight;
+                    imgWidth = (img.width / img.height) * imgHeight;
+                }
+                
+                // Center the image on the page
+                const x = (pageWidth - imgWidth) / 2;
+                const y = (pageHeight - imgHeight) / 2;
+                
+                // Add image to PDF
+                pdf.addImage(
+                    img, 
+                    'JPEG', 
+                    x, 
+                    y, 
+                    imgWidth, 
+                    imgHeight
+                );
             }
             
             function showToast(message, type) {
