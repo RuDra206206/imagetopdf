@@ -549,6 +549,67 @@
             color: #f72585;
         }
 
+        /* Download success modal */
+        .download-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .download-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .download-modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transform: translateY(20px);
+            transition: all 0.3s;
+        }
+
+        .download-modal.show .download-modal-content {
+            transform: translateY(0);
+        }
+
+        .download-modal h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .download-modal p {
+            color: var(--gray);
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+        }
+
+        .download-modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .download-modal-buttons .btn {
+            flex: 1;
+            text-align: center;
+        }
+
         /* Responsive styles */
         @media (max-width: 992px) {
             .hero h1 {
@@ -586,6 +647,14 @@
             .btn {
                 width: 100%;
             }
+
+            .download-modal-buttons {
+                flex-direction: column;
+            }
+
+            .download-modal-buttons .btn {
+                width: 100%;
+            }
         }
 
         @media (max-width: 576px) {
@@ -603,6 +672,10 @@
             
             .options-container {
                 padding: 20px;
+            }
+
+            .download-modal h3 {
+                font-size: 1.5rem;
             }
         }
     </style>
@@ -741,6 +814,22 @@
         <!-- Toast Notification -->
         <div class="toast" id="toast"></div>
         
+        <!-- Download Success Modal -->
+        <div class="download-modal" id="downloadModal">
+            <div class="download-modal-content">
+                <h3><i class="fas fa-check-circle"></i> PDF Downloaded Successfully!</h3>
+                <p>Your PDF file has been successfully downloaded to your device. You can now print it or share it with others.</p>
+                <div class="download-modal-buttons">
+                    <button class="btn btn-secondary" id="closeModalBtn">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="btn btn-accent" id="printPdfBtn">
+                        <i class="fas fa-print"></i> Print It Now
+                    </button>
+                </div>
+            </div>
+        </div>
+        
         <script>
             // Initialize jsPDF
             const { jsPDF } = window.jspdf;
@@ -755,6 +844,9 @@
             const convertBtn = document.getElementById('convertBtn');
             const spinner = document.getElementById('spinner');
             const toast = document.getElementById('toast');
+            const downloadModal = document.getElementById('downloadModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const printPdfBtn = document.getElementById('printPdfBtn');
             
             // Options
             const pageSize = document.getElementById('pageSize');
@@ -762,8 +854,9 @@
             const marginSize = document.getElementById('marginSize');
             const pdfName = document.getElementById('pdfName');
             
-            // Store uploaded files
+            // Store uploaded files and PDF reference
             let uploadedFiles = [];
+            let generatedPdf = null;
             
             // Set current year in footer
             document.getElementById('currentYear').textContent = new Date().getFullYear();
@@ -794,6 +887,8 @@
             clearAllBtn.addEventListener('click', clearAllFiles);
             addMoreBtn.addEventListener('click', () => fileInput.click());
             convertBtn.addEventListener('click', convertToPDF);
+            closeModalBtn.addEventListener('click', closeDownloadModal);
+            printPdfBtn.addEventListener('click', printPdf);
             
             // Functions
             function handleFiles(files) {
@@ -932,6 +1027,12 @@
                     const fileName = pdfName.value.trim() || 'converted_images';
                     pdf.save(`${fileName}.pdf`);
                     
+                    // Store the PDF reference for printing
+                    generatedPdf = pdf;
+                    
+                    // Show download success modal
+                    showDownloadModal();
+                    
                     showToast('PDF created successfully!', 'success');
                 } catch (error) {
                     console.error('Error creating PDF:', error);
@@ -1016,6 +1117,38 @@
                 setTimeout(() => {
                     toast.classList.remove('show');
                 }, 3000);
+            }
+            
+            function showDownloadModal() {
+                downloadModal.classList.add('show');
+            }
+            
+            function closeDownloadModal() {
+                downloadModal.classList.remove('show');
+            }
+            
+            function printPdf() {
+                if (generatedPdf) {
+                    // Create a blob URL for the PDF
+                    const pdfBlob = generatedPdf.output('blob');
+                    const pdfUrl = URL.createObjectURL(pdfBlob);
+                    
+                    // Open the PDF in a new window for printing
+                    const printWindow = window.open(pdfUrl);
+                    
+                    // Wait for the PDF to load then trigger print
+                    if (printWindow) {
+                        printWindow.onload = function() {
+                            setTimeout(() => {
+                                printWindow.print();
+                            }, 500);
+                        };
+                    }
+                } else {
+                    showToast('No PDF available to print', 'error');
+                }
+                
+                closeDownloadModal();
             }
         </script>
     </div>
