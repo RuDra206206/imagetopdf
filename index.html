@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Convert Image to PDF Online Free | ConvertImagePDF.com</title>
+    <title>Convert Image to PDF Online Free | ImageToPdfs.com</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -623,6 +623,70 @@
             text-align: center;
         }
 
+        /* Compression info */
+        .compression-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .compression-info i {
+            color: var(--primary);
+        }
+
+        /* Policy pages */
+        .policy-container {
+            background: rgba(255,255,255,0.9);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .policy-container h1 {
+            font-size: 2.2rem;
+            margin-bottom: 30px;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .policy-container h2 {
+            font-size: 1.6rem;
+            margin: 30px 0 15px;
+            color: var(--secondary);
+        }
+
+        .policy-container h3 {
+            font-size: 1.3rem;
+            margin: 25px 0 10px;
+            color: var(--dark);
+        }
+
+        .policy-container p {
+            margin-bottom: 15px;
+            line-height: 1.7;
+            color: var(--dark);
+        }
+
+        .policy-container ul {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        .policy-container li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+        }
+
         /* Responsive styles */
         @media (max-width: 992px) {
             .hero h1 {
@@ -668,6 +732,14 @@
             .download-modal-buttons .btn {
                 width: 100%;
             }
+
+            .policy-container {
+                padding: 30px;
+            }
+
+            .policy-container h1 {
+                font-size: 1.8rem;
+            }
         }
 
         @media (max-width: 576px) {
@@ -690,6 +762,18 @@
             .download-modal h3 {
                 font-size: 1.5rem;
             }
+
+            .policy-container {
+                padding: 20px;
+            }
+
+            .policy-container h1 {
+                font-size: 1.6rem;
+            }
+
+            .policy-container h2 {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
@@ -697,17 +781,18 @@
     <div class="overlay">
         <header>
             <div class="container header-content">
-                <a href="/" class="logo"><i class="fas fa-file-pdf"></i>ConvertImagePDF</a>
+                <a href="/" class="logo"><i class="fas fa-file-pdf"></i>ImageToPdfs</a>
                 <nav>
                     <ul>
-                        <li><a href="/privacy">Privacy</a></li>
-                        <li><a href="/terms">Terms</a></li>
+                        <li><a href="#" onclick="showPrivacyPolicy()">Privacy</a></li>
+                        <li><a href="#" onclick="showTerms()">Terms</a></li>
                     </ul>
                 </nav>
             </div>
         </header>
         
-        <main class="container">
+        <main class="container" id="mainContent">
+            <!-- Main Converter Content -->
             <section class="hero">
                 <h1>Convert Images to Beautiful PDFs</h1>
                 <p>Transform your JPG, PNG, or WEBP images into professional PDF documents in seconds. Our free online tool preserves quality while being incredibly easy to use.</p>
@@ -728,13 +813,17 @@
                     <i class="fas fa-cloud-upload-alt"></i>
                     <h3>Upload Your Images</h3>
                     <p>Supports JPG, PNG, WEBP, GIF, BMP, TIFF and more</p>
-                    <button class="btn"><i class="fas fa-folder-open"></i> Select Files</button>
+                    <button class="btn" id="selectFilesBtn"><i class="fas fa-folder-open"></i> Select Files</button>
                     <input type="file" id="fileInput" accept="image/*" multiple>
                 </div>
                 
                 <div class="preview-container" id="previewContainer">
                     <div class="preview-header">
                         <h3>Your Selected Images</h3>
+                        <div class="compression-info">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Images are automatically optimized for best quality and file size</span>
+                        </div>
                     </div>
                     
                     <div class="preview-images" id="previewImages"></div>
@@ -818,6 +907,96 @@
             </section>
         </main>
         
+        <!-- Privacy Policy Content (hidden by default) -->
+        <div id="privacyPolicy" class="container" style="display: none;">
+            <div class="policy-container">
+                <h1><i class="fas fa-user-shield"></i> Privacy Policy</h1>
+                
+                <p>Last Updated: <span id="privacyDate"></span></p>
+                
+                <p>Welcome to ImageToPdfs.com ("we," "our," or "us"). We are committed to protecting your privacy. This Privacy Policy explains how we handle your information when you use our image to PDF conversion service.</p>
+                
+                <h2>1. Information We Do Not Collect</h2>
+                <p>Our service is designed with your privacy in mind. We want to make it clear that:</p>
+                <ul>
+                    <li>We do not upload your images to any server - all processing happens directly in your browser</li>
+                    <li>We do not collect, store, or have access to any of the images you convert</li>
+                    <li>We do not use cookies or tracking technologies to monitor your usage</li>
+                    <li>We do not require any personal information to use our service</li>
+                </ul>
+                
+                <h2>2. How Our Service Works</h2>
+                <p>Our image to PDF converter operates entirely client-side:</p>
+                <ul>
+                    <li>When you upload images, they remain in your browser's memory only for the duration of the conversion process</li>
+                    <li>The conversion from image to PDF happens locally on your device using JavaScript</li>
+                    <li>Once the conversion is complete and you download the PDF, all image data is automatically cleared from memory</li>
+                    <li>We never transmit your files over the internet</li>
+                </ul>
+                
+                <h2>3. Third-Party Services</h2>
+                <p>We use the following third-party services that may collect anonymous usage data:</p>
+                <ul>
+                    <li><strong>Google Analytics:</strong> To understand how visitors use our site (you can opt-out using browser extensions)</li>
+                    <li><strong>Cloudflare:</strong> For content delivery and security</li>
+                </ul>
+                
+                <h2>4. Changes to This Policy</h2>
+                <p>We may update this Privacy Policy from time to time. We will notify you of any changes by updating the "Last Updated" date at the top of this policy.</p>
+                
+                <h2>5. Contact Us</h2>
+                <p>If you have any questions about this Privacy Policy, please contact us at image2pdfs@gmail.com.</p>
+                
+                <a href="#" onclick="showMainContent()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back to Converter</a>
+            </div>
+        </div>
+        
+        <!-- Terms of Service Content (hidden by default) -->
+        <div id="termsOfService" class="container" style="display: none;">
+            <div class="policy-container">
+                <h1><i class="fas fa-file-contract"></i> Terms of Service</h1>
+                
+                <p>Last Updated: <span id="termsDate"></span></p>
+                
+                <p>Welcome to ImageToPdfs.com ("we," "our," or "us"). By using our image to PDF conversion service ("Service"), you agree to these Terms of Service.</p>
+                
+                <h2>1. Service Description</h2>
+                <p>ImageToPdfs.com provides a free online tool that allows users to convert image files to PDF documents. The service operates entirely in your web browser - no files are uploaded to our servers.</p>
+                
+                <h2>2. User Responsibilities</h2>
+                <p>By using our Service, you agree:</p>
+                <ul>
+                    <li>You will not use the Service for any illegal purpose or in violation of any laws</li>
+                    <li>You have the necessary rights to any images you convert using our Service</li>
+                    <li>You will not upload or convert any harmful, offensive, or inappropriate content</li>
+                    <li>You understand that we cannot recover lost files - please keep backups of your original images</li>
+                </ul>
+                
+                <h2>3. Intellectual Property</h2>
+                <p>All intellectual property rights in the Service, including the website design, code, and branding, are owned by us. You retain all rights to the images you convert using our Service.</p>
+                
+                <h2>4. Disclaimer of Warranties</h2>
+                <p>The Service is provided "as is" without warranties of any kind. We do not guarantee that:</p>
+                <ul>
+                    <li>The Service will meet your specific requirements</li>
+                    <li>The Service will be uninterrupted, timely, or error-free</li>
+                    <li>The results from using the Service will be accurate or reliable</li>
+                    <li>The quality of any PDFs produced will meet your expectations</li>
+                </ul>
+                
+                <h2>5. Limitation of Liability</h2>
+                <p>In no event shall ImageToPdfs.com be liable for any damages arising out of or related to the use of our Service. This includes, without limitation, direct, indirect, incidental, or consequential damages.</p>
+                
+                <h2>6. Changes to These Terms</h2>
+                <p>We reserve the right to modify these Terms at any time. We will notify you of any changes by updating the "Last Updated" date at the top of these Terms.</p>
+                
+                <h2>7. Governing Law</h2>
+                <p>These Terms shall be governed by and construed in accordance with the laws of the United States, without regard to its conflict of law provisions.</p>
+                
+                <a href="#" onclick="showMainContent()" class="btn back-btn"><i class="fas fa-arrow-left"></i> Back to Converter</a>
+            </div>
+        </div>
+        
         <footer>
             <div class="container footer-content">
                 <div class="social-links">
@@ -826,7 +1005,7 @@
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-pinterest"></i></a>
                 </div>
-                <p class="copyright">&copy; <span id="currentYear"></span> ConvertImagePDF.com. All rights reserved.</p>
+                <p class="copyright">&copy; <span id="currentYear"></span> ImageToPdfs.com. All rights reserved.</p>
             </div>
         </footer>
         
@@ -856,6 +1035,7 @@
             // DOM Elements
             const dropArea = document.getElementById('dropArea');
             const fileInput = document.getElementById('fileInput');
+            const selectFilesBtn = document.getElementById('selectFilesBtn');
             const previewContainer = document.getElementById('previewContainer');
             const previewImages = document.getElementById('previewImages');
             const clearAllBtn = document.getElementById('clearAllBtn');
@@ -867,6 +1047,11 @@
             const closeModalBtn = document.getElementById('closeModalBtn');
             const printPdfBtn = document.getElementById('printPdfBtn');
             
+            // Content sections
+            const mainContent = document.getElementById('mainContent');
+            const privacyPolicy = document.getElementById('privacyPolicy');
+            const termsOfService = document.getElementById('termsOfService');
+            
             // Options
             const pageSize = document.getElementById('pageSize');
             const pageOrientation = document.getElementById('pageOrientation');
@@ -877,15 +1062,19 @@
             let uploadedFiles = [];
             let generatedPdf = null;
             
-            // Set current year in footer
+            // Set current dates
             document.getElementById('currentYear').textContent = new Date().getFullYear();
+            document.getElementById('privacyDate').textContent = new Date().toLocaleDateString();
+            document.getElementById('termsDate').textContent = new Date().toLocaleDateString();
             
             // Event Listeners
-            dropArea.addEventListener('click', () => fileInput.click());
+            selectFilesBtn.addEventListener('click', () => fileInput.click());
             
             fileInput.addEventListener('change', (e) => {
-                handleFiles(e.target.files);
-                fileInput.value = '';
+                if (e.target.files.length > 0) {
+                    handleFiles(e.target.files);
+                    fileInput.value = '';
+                }
             });
             
             dropArea.addEventListener('dragover', (e) => {
@@ -900,7 +1089,9 @@
             dropArea.addEventListener('drop', (e) => {
                 e.preventDefault();
                 dropArea.classList.remove('active');
-                handleFiles(e.dataTransfer.files);
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
             });
             
             clearAllBtn.addEventListener('click', clearAllFiles);
@@ -909,7 +1100,32 @@
             closeModalBtn.addEventListener('click', closeDownloadModal);
             printPdfBtn.addEventListener('click', printPdf);
             
-            // Functions
+            // Functions for showing different content sections
+            function showMainContent() {
+                mainContent.style.display = 'block';
+                privacyPolicy.style.display = 'none';
+                termsOfService.style.display = 'none';
+                document.title = 'Convert Image to PDF Online Free | ImageToPdfs.com';
+                window.scrollTo(0, 0);
+            }
+            
+            function showPrivacyPolicy() {
+                mainContent.style.display = 'none';
+                privacyPolicy.style.display = 'block';
+                termsOfService.style.display = 'none';
+                document.title = 'Privacy Policy | ImageToPdfs.com';
+                window.scrollTo(0, 0);
+            }
+            
+            function showTerms() {
+                mainContent.style.display = 'none';
+                privacyPolicy.style.display = 'none';
+                termsOfService.style.display = 'block';
+                document.title = 'Terms of Service | ImageToPdfs.com';
+                window.scrollTo(0, 0);
+            }
+            
+            // Converter Functions
             function handleFiles(files) {
                 if (files.length === 0) return;
                 
@@ -921,18 +1137,97 @@
                     return;
                 }
                 
-                // Add to uploaded files
-                uploadedFiles = [...uploadedFiles, ...imageFiles];
+                // Process each image with automatic compression
+                processImages(imageFiles).then(compressedFiles => {
+                    // Add to uploaded files
+                    uploadedFiles = [...uploadedFiles, ...compressedFiles];
+                    
+                    // Update preview
+                    updatePreview();
+                    
+                    // Show preview container if not already visible
+                    if (previewContainer.style.display !== 'block') {
+                        previewContainer.style.display = 'block';
+                    }
+                    
+                    showToast(`${imageFiles.length} image(s) added and optimized`, 'success');
+                });
+            }
+            
+            function processImages(files) {
+                return Promise.all(files.map(file => {
+                    return new Promise((resolve) => {
+                        const reader = new FileReader();
+                        
+                        reader.onload = (e) => {
+                            const img = new Image();
+                            img.onload = () => {
+                                // Determine compression quality based on image size
+                                const quality = calculateOptimalQuality(img, file.size);
+                                
+                                // Compress the image
+                                compressImage(img, quality).then(compressedBlob => {
+                                    // Create a new file with compressed version
+                                    const compressedFile = new File([compressedBlob], file.name, {
+                                        type: 'image/jpeg',
+                                        lastModified: Date.now()
+                                    });
+                                    
+                                    resolve(compressedFile);
+                                });
+                            };
+                            img.src = e.target.result;
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    });
+                }));
+            }
+            
+            function calculateOptimalQuality(img, originalSize) {
+                // Base quality
+                let quality = 0.8; // Default to 80% quality
                 
-                // Update preview
-                updatePreview();
+                // Adjust based on image dimensions
+                const megapixels = (img.width * img.height) / 1000000;
                 
-                // Show preview container if not already visible
-                if (previewContainer.style.display !== 'block') {
-                    previewContainer.style.display = 'block';
+                if (megapixels > 5) {
+                    // Large images get slightly more compression
+                    quality = 0.7;
+                } else if (megapixels > 10) {
+                    // Very large images get more compression
+                    quality = 0.6;
                 }
                 
-                showToast(`${imageFiles.length} image(s) added successfully`, 'success');
+                // Adjust based on original file size
+                const mb = originalSize / (1024 * 1024);
+                if (mb > 3) {
+                    quality = Math.max(0.5, quality - 0.1);
+                } else if (mb > 5) {
+                    quality = Math.max(0.4, quality - 0.2);
+                }
+                
+                return quality;
+            }
+            
+            function compressImage(img, quality) {
+                return new Promise((resolve) => {
+                    // Create canvas to compress the image
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Set canvas dimensions to match image
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    
+                    // Draw image on canvas
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    
+                    // Compress to JPEG (even if original was PNG)
+                    canvas.toBlob((blob) => {
+                        resolve(blob);
+                    }, 'image/jpeg', quality);
+                });
             }
             
             function updatePreview() {
@@ -1021,7 +1316,7 @@
                     }
                     
                     // Add first image
-                    addImageToPDF(pdf, firstImg, margin, pageSizeValue);
+                    await addImageToPDF(pdf, firstImg, margin, pageSizeValue);
                     
                     // Process remaining images
                     for (let i = 1; i < uploadedFiles.length; i++) {
@@ -1039,7 +1334,7 @@
                         }
                         
                         // Add image to the new page
-                        addImageToPDF(pdf, img, margin, pageSizeValue);
+                        await addImageToPDF(pdf, img, margin, pageSizeValue);
                     }
                     
                     // Save PDF
@@ -1096,7 +1391,7 @@
                 return { width, height };
             }
             
-            function addImageToPDF(pdf, img, margin, pageSizeValue) {
+            async function addImageToPDF(pdf, img, margin, pageSizeValue) {
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 
